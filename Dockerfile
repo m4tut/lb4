@@ -1,10 +1,14 @@
+# Используем официальный образ OpenJDK
 FROM eclipse-temurin:17-jdk-alpine
 
-# Установка curl в Alpine Linux
-RUN apk add --no-cache curl
+# Устанавливаем рабочую директорию
+WORKDIR /app
 
-# Копирование JAR-файла приложения
-COPY build/libs/*.jar /app.jar
+# Копируем JAR-файл в контейнер
+COPY target/*.jar app.jar
+
+# Указываем порт, который будет использовать приложение
+EXPOSE 8080
 
 # Команда для запуска приложения
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,0 +1,41 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master  # Запускать пайплайн при пуше в ветку master
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest  # Используем последнюю версию Ubuntu
+
+    steps:
+      # Шаг 1: Получить код из репозитория
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Шаг 2: Установить JDK
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'  # Укажите версию Java, которую использует ваш проект
+          distribution: 'temurin'  # Используем Temurin (Adoptium)
+
+      # Шаг 3: Собрать проект с помощью Maven
+      - name: Build with Maven
+        run: mvn clean package  # Сборка проекта и создание JAR-файла
+
+      # Шаг 4: Логин в Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      # Шаг 5: Собрать Docker-образ
+      - name: Build Docker image
+        run: docker build -t m4tut/lb4:latest .  # Замените m4tut/lb4 на ваш Docker Hub репозиторий
+
+      # Шаг 6: Запушить Docker-образ в Docker Hub
+      - name: Push Docker image
+        run: docker push m4tut/lb4:latest
