@@ -5,7 +5,7 @@ FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
 # Копируем JAR-файл в контейнер
-COPY target/*.jar app.jar
+COPY build/libs/*.jar app.jar
 
 # Указываем порт, который будет использовать приложение
 EXPOSE 8080
